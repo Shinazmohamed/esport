@@ -1,17 +1,16 @@
 ﻿using esport.Contracts.Business;
-using esport.Contracts.Repository;
+using esport.DB;
 using esport.DTOs;
-using esport.Models;
 
 namespace esport.Business
 {
 	public class LoginBusiness : ILoginBusiness
     {
-		private readonly ILoginRepository _repository;
+		private AppDbContext _dbContext;
 
-		public LoginBusiness(ILoginRepository repository)
+		public LoginBusiness(AppDbContext dbContext)
 		{
-			_repository = repository;
+			_dbContext = dbContext;
         }
 
         public LoginResponse login(LoginRequest request)
@@ -19,7 +18,7 @@ namespace esport.Business
 			var response = new LoginResponse();
             try
 			{
-                var currentUser = _repository.Login(request);
+                var currentUser = _dbContext.Users.Where(e => e.Username == request.Username)?.FirstOrDefault();
 				if(currentUser == null)
 				{
 					response.Messsage = "User not found";
